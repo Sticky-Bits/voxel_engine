@@ -291,17 +291,33 @@ unsigned int loadTexture(char const * path)
 	return textureID;
 }
 
-bool myfunc(glm::vec3 a, glm::vec3 b)
-{
-	return true;
-}
-
 struct compareVec
 {
-	bool operator() (const glm::vec3& lhs, const glm::vec3& rhs) const
-	{
-		return lhs.x < rhs.x && lhs.y < rhs.y && lhs.z < rhs.z;
-	}
+    bool operator() (const glm::vec3& lhs, const glm::vec3& rhs) const
+    {
+		if(lhs.x < rhs.x)
+		return true;
+		else if(lhs.x > rhs.x)
+		return false;
+		else
+		{
+			if(lhs.y < rhs.y)
+			return true;
+			else if(lhs.y > rhs.y)
+			return false;
+			else
+			{
+				if(lhs.z < rhs.z)
+				return true;
+				else if(lhs.z > rhs.z)
+				return false;
+				else
+				{
+					return false;
+				}
+			}
+		}
+    }
 };
 
 void change_chunks(glm::vec3 before, glm::vec3 after)
@@ -323,11 +339,11 @@ void change_chunks(glm::vec3 before, glm::vec3 after)
 		}
 	}
 
-	std::set<glm::vec3> show_set, hide_set;
-	std::set_difference(after_set.begin(), after_set.end(), before_set.begin(), before_set.end(), std::inserter(show_set, show_set.begin()));
-	//std::set_difference(before_set.begin(), before_set.end(), after_set.begin(), after_set.end(), std::inserter(hide_set, hide_set.end()));
+	std::vector<glm::vec3> show_set, hide_set;
+	std::set_difference(after_set.begin(), after_set.end(), before_set.begin(), before_set.end(), std::inserter(show_set, show_set.begin()), compareVec());
+	std::set_difference(before_set.begin(), before_set.end(), after_set.begin(), after_set.end(), std::inserter(hide_set, hide_set.end()), compareVec());
 
-	/*for (auto chunk : show_set)
+	for (auto chunk : show_set)
 	{
 		std::cout << "Showing: " << chunk.x << ", " << chunk.y << ", " << chunk.z << std::endl;
 		show_chunk(chunk);
@@ -336,7 +352,7 @@ void change_chunks(glm::vec3 before, glm::vec3 after)
 	{
 		std::cout << "Hiding: " << chunk.x << ", " << chunk.y << ", " << chunk.z << std::endl;
 		hide_chunk(chunk);
-	}*/
+	}
 	
 }
 
