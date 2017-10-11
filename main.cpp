@@ -119,7 +119,7 @@ int main()
 
 	// load textures (we now use a utility function to keep the code more organized)
 	// -----------------------------------------------------------------------------
-	unsigned int diffuseMap = loadTexture("textures/blocks/grass_side.png");
+	//unsigned int diffuseMap = loadTexture("textures/blocks/grass_side.png");
 	//unsigned int specularMap = loadTexture("textures/blocks/grass_top.png");
 
 	// shader configuration
@@ -167,11 +167,15 @@ int main()
 		lightingShader.setMat4("projection", projection);
 		lightingShader.setMat4("view", view);
 
+		// Bind textures
+		//glActiveTexture(GL_TEXTURE0);
+        //glBindTexture(GL_TEXTURE_2D, diffuseMap);
+		
 		// Draw Chunks
 		for (auto chunk : chunks) {
 			glBindVertexArray(chunk.VAO);
 			glm::mat4 model;
-			model = glm::translate(model, chunk.position * (float)CHUNK_SIZE);
+			model = glm::translate(model, chunk.chunk_position * (float)CHUNK_SIZE);
 			lightingShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, chunk.vertices.size() / 6);
 			/* std::cout << *it; ... */

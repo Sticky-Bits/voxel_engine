@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <vector>
 #include <array>
+#include "FastNoise.h"
 
 const int CHUNK_SIZE = 16;
 
@@ -14,29 +15,34 @@ public:
 
     std::vector<float> vertices;
     std::array<std::array<std::array<int, CHUNK_SIZE>, CHUNK_SIZE>, CHUNK_SIZE> voxels;
-	glm::vec3 position;
+	glm::vec3 chunk_position;
+	glm::vec3 world_position;
 	unsigned int VBO, VAO;
 
 private:
 };
 
-Chunk::Chunk(glm::vec3 chunk_position)
+Chunk::Chunk(glm::vec3 position)
 {
-	position = chunk_position;
+	chunk_position = position;
+	world_position = chunk_position * (float)CHUNK_SIZE;
     gen_voxels();
     gen_vertices();
 }
 
 void Chunk::gen_voxels()
 {
-    // set all voxels to true for testing
+	FastNoise myNoise;
+	myNoise.SetNoiseType(FastNoise::SimplexFractal);
+    // Generate Voxels
     for (int x = 0; x < CHUNK_SIZE; x++)
     {
-        for (int y = 0; y < CHUNK_SIZE; y++)
+        for (int z = 0; z < CHUNK_SIZE; z++)
         {
-			for (int z = 0; z < CHUNK_SIZE; z++)
+			float height = (myNoise.GetNoise(world_position.x + x, world_position.z + z) + 1.0f) * 8;
+			for (int y = 0; y < CHUNK_SIZE; y++)
 			{
-				if (y < 3+(rand()%2))
+				if (y < height)
 				{
 					voxels[x][y][z] = true;
 				}
@@ -210,8 +216,8 @@ void Chunk::gen_vertices()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	//glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 }
 
 void Chunk::delete_buffers()
