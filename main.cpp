@@ -97,8 +97,8 @@ int main()
 
 	// set up chunks
 	// ------------------------------------------------------------------
-	//Chunk chunk(glm::vec3(-1,0,0));
-	/*std::vector<Chunk> chunks = {
+	Chunk chunk(glm::vec3(-1,0,0));
+	std::vector<Chunk> chunks = {
 		Chunk(glm::vec3(0, 0, 0)),
 		Chunk(glm::vec3(-1,0,0)),
 		Chunk(glm::vec3(1,0,0)),
@@ -108,8 +108,10 @@ int main()
 		Chunk(glm::vec3(-1, 0, -1)),
 		Chunk(glm::vec3(0, 0, -1)),
 		Chunk(glm::vec3(0, 0, 1)),
-	};*/
-	std::unordered_map<glm::vec3, Chunk> chunks;
+	};
+	//std::unordered_map<glm::vec3, Chunk> chunks;
+
+	//change_chunks(glm::vec3(0, 0, 0), glm::vec3(100, 0, 0));
 	
 	// Draw in wireframe
 	glPointSize(5.0f);
@@ -167,15 +169,14 @@ int main()
 		lightingShader.setMat4("view", view);
 
 		// Draw Chunks
-		//for (std::vector<Chunk>::iterator it = chunks.begin(); it != chunks.end(); ++it) {
-		//	Chunk& chunk = *it;
-		//	glBindVertexArray(chunk.VAO);
-		//	glm::mat4 model;
-		//	model = glm::translate(model, chunk.position * (float)CHUNK_SIZE);
-		//	lightingShader.setMat4("model", model);
-		//	glDrawArrays(GL_TRIANGLES, 0, chunk.vertices.size() / 6);
-		//	/* std::cout << *it; ... */
-		//}
+		for (auto chunk : chunks) {
+			glBindVertexArray(chunk.VAO);
+			glm::mat4 model;
+			model = glm::translate(model, chunk.position * (float)CHUNK_SIZE);
+			lightingShader.setMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, chunk.vertices.size() / 6);
+			/* std::cout << *it; ... */
+		}
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
