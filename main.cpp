@@ -119,14 +119,13 @@ int main()
 
 	// load textures (we now use a utility function to keep the code more organized)
 	// -----------------------------------------------------------------------------
-	//unsigned int diffuseMap = loadTexture("textures/blocks/grass_side.png");
+	unsigned int diffuseMap = loadTexture("textures/blocks/grass_side.png");
 	//unsigned int specularMap = loadTexture("textures/blocks/grass_top.png");
 
 	// shader configuration
 	// --------------------
 	lightingShader.use();
 	lightingShader.setInt("material.diffuse", 0);
-	lightingShader.setInt("material.specular", 1);
 	lightingShader.setVec3("color", glm::vec3(1.0f, 1.0f, 1.0f));
 
 

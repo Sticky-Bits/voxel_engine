@@ -134,6 +134,8 @@ void Chunk::gen_vertices()
 						vertices.push_back(normalx);
 						vertices.push_back(normaly);
 						vertices.push_back(normalz);
+						vertices.push_back(x[0]);//texture x
+						vertices.push_back(x[1]);//texture y
 
 						vertices.push_back(x[0] + du[0]);
 						vertices.push_back(x[1] + du[1]);
@@ -141,6 +143,8 @@ void Chunk::gen_vertices()
 						vertices.push_back(normalx);
 						vertices.push_back(normaly);
 						vertices.push_back(normalz);
+						vertices.push_back(x[0] + du[0]);
+						vertices.push_back(x[1] + du[1]);
 
 						vertices.push_back(x[0] + du[0] + dv[0]);
 						vertices.push_back(x[1] + du[1] + dv[1]);
@@ -148,6 +152,8 @@ void Chunk::gen_vertices()
 						vertices.push_back(normalx);
 						vertices.push_back(normaly);
 						vertices.push_back(normalz);
+						vertices.push_back(x[0] + du[0] + dv[0]);
+						vertices.push_back(x[1] + du[1] + dv[1]);
 
 						vertices.push_back(x[0] + du[0] + dv[0]);
 						vertices.push_back(x[1] + du[1] + dv[1]);
@@ -155,6 +161,8 @@ void Chunk::gen_vertices()
 						vertices.push_back(normalx);
 						vertices.push_back(normaly);
 						vertices.push_back(normalz);
+						vertices.push_back(x[0] + du[0] + dv[0]);
+						vertices.push_back(x[1] + du[1] + dv[1]);
 
 						vertices.push_back(x[0] + dv[0]);
 						vertices.push_back(x[1] + dv[1]);
@@ -162,6 +170,8 @@ void Chunk::gen_vertices()
 						vertices.push_back(normalx);
 						vertices.push_back(normaly);
 						vertices.push_back(normalz);
+						vertices.push_back(x[0] + dv[0]);
+						vertices.push_back(x[1] + dv[1]);
 
 						vertices.push_back(x[0]);//x
 						vertices.push_back(x[1]);//y
@@ -169,6 +179,8 @@ void Chunk::gen_vertices()
 						vertices.push_back(normalx);
 						vertices.push_back(normaly);
 						vertices.push_back(normalz);
+						vertices.push_back(x[0]);//x
+						vertices.push_back(x[1]);//y
 						// Correct winding order for culling?
                         // Zero out mask
                         for (l=0; l<h; ++l)
@@ -194,10 +206,12 @@ void Chunk::gen_vertices()
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
 	glBindVertexArray(VAO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	//glEnableVertexAttribArray(1);
 }
 
 void Chunk::delete_buffers()
