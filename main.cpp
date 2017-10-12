@@ -22,6 +22,8 @@
 #include <unordered_map>
 #include <set>
 #include <algorithm>
+#include <queue>
+#include <functional>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -29,24 +31,38 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
 unsigned int loadTexture(const char *path);
 
-void change_chunks(glm::vec3 before, glm::vec3 after);
-void show_chunk(glm::vec3 chunk);
-void hide_chunk(glm::vec3 chunk);
+void change_chunks(glm::vec3 before, glm::vec3 after, bool first_time = false);
+void show_chunk(glm::vec3 chunk, bool immediate = false);
+void hide_chunk(glm::vec3 chunk, bool immediate = false);
+void _show_chunk(glm::vec3 chunk);
+void _hide_chunk(glm::vec3 chunk);
+void process_queue();
+void process_entire_queue();
+
+glm::vec3 normalize_position(glm::vec3 position);
+glm::vec3 position_to_chunk(glm::vec3 position);
 
 // settings
 const unsigned int SCR_WIDTH = 1920;
 const unsigned int SCR_HEIGHT = 1080;
-static const int VIEW_DISTANCE = 3;
+static const int VIEW_DISTANCE = 10;
+static const int TICKS_PER_SEC = 60;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
+glm::vec3 current_chunk = position_to_chunk(camera.Position);
 
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+// Chunk map
+std::unordered_map<glm::vec3, Chunk> chunks;
+// Queue
+std::queue<std::function<void()>> operation_queue;
 
 int main()
 {
@@ -97,21 +113,7 @@ int main()
 
 	// set up chunks
 	// ------------------------------------------------------------------
-	Chunk chunk(glm::vec3(-1,0,0));
-	std::vector<Chunk> chunks = {
-		Chunk(glm::vec3(0, 0, 0)),
-		Chunk(glm::vec3(-1,0,0)),
-		Chunk(glm::vec3(1,0,0)),
-		Chunk(glm::vec3(1, 0, 1)),
-		Chunk(glm::vec3(-1, 0, 1)),
-		Chunk(glm::vec3(1, 0, -1)),
-		Chunk(glm::vec3(-1, 0, -1)),
-		Chunk(glm::vec3(0, 0, -1)),
-		Chunk(glm::vec3(0, 0, 1)),
-	};
-	//std::unordered_map<glm::vec3, Chunk> chunks;
-
-	//change_chunks(glm::vec3(0, 0, 0), glm::vec3(100, 0, 0));
+	change_chunks(glm::vec3(999, 0, 0), glm::vec3(0, 0, 0), false);
 	
 	// Draw in wireframe
 	glPointSize(5.0f);
@@ -148,9 +150,18 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		// Check to see if player moved chunks
+		glm::vec3 last_chunk = current_chunk;
+		current_chunk = position_to_chunk(camera.Position);
+		if (current_chunk != last_chunk)
+		{
+			change_chunks(last_chunk, current_chunk);
+		}
+
 		// be sure to activate shader when setting uniforms/drawing objects
 		lightingShader.use();
-		lightingShader.setVec3("light.direction", -0.2f, -1.0f, -0.3f);
+		//lightingShader.setVec3("light.direction", -0.0f, -1.0f, sin(glfwGetTime()));
+		lightingShader.setVec3("light.direction", -0.5f, -1.0f, -0.0f);
 		lightingShader.setVec3("viewPos", camera.Position);
 
 		// light properties
@@ -162,7 +173,7 @@ int main()
 		lightingShader.setFloat("material.shininess", 32.0f);
 
 		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		lightingShader.setMat4("projection", projection);
 		lightingShader.setMat4("view", view);
@@ -173,12 +184,18 @@ int main()
 		
 		// Draw Chunks
 		for (auto chunk : chunks) {
-			glBindVertexArray(chunk.VAO);
+			glBindVertexArray(chunk.second.VAO);
 			glm::mat4 model;
-			model = glm::translate(model, chunk.chunk_position * (float)CHUNK_SIZE);
+			model = glm::translate(model, chunk.second.chunk_position * (float)CHUNK_SIZE);
 			lightingShader.setMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, chunk.vertices.size() / 6);
+			glDrawArrays(GL_TRIANGLES, 0, chunk.second.vertices.size() / 6);
 			/* std::cout << *it; ... */
+		}
+
+		float start = glfwGetTime();
+		while (!operation_queue.empty() && glfwGetTime() - start < 1.0 / TICKS_PER_SEC)
+		{
+			process_queue();
 		}
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -208,6 +225,9 @@ void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		std::cout << "Number of loaded chunks: " << chunks.size() << std::endl;
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
@@ -295,6 +315,26 @@ unsigned int loadTexture(char const * path)
 	return textureID;
 }
 
+template<typename _Callable, typename... _Args>
+void queue_function(_Callable&& __f, _Args&&... __args)
+{
+	std::function<void()> func = std::bind(std::forward<_Callable>(__f), std::forward<_Args>(__args)...);
+	operation_queue.push(func);
+}
+
+void process_queue()
+{
+	std::function<void()> func = operation_queue.front();
+	operation_queue.pop();
+	func();
+}
+
+void process_entire_queue()
+{
+	while(!operation_queue.empty())
+		process_queue();
+}
+
 struct compareVec
 {
     bool operator() (const glm::vec3& lhs, const glm::vec3& rhs) const
@@ -324,14 +364,14 @@ struct compareVec
     }
 };
 
-void change_chunks(glm::vec3 before, glm::vec3 after)
+void change_chunks(glm::vec3 before, glm::vec3 after, bool first_time/* = false*/)
 {
 	std::set<glm::vec3, compareVec > before_set, after_set;
-	for (int dx = -VIEW_DISTANCE; dx < VIEW_DISTANCE; dx++)
+	for (int dx = -VIEW_DISTANCE; dx < VIEW_DISTANCE + 1; dx++)
 	{
-		for (int dy = 0; dy < 3; dy++)//(int dy = -VIEW_DISTANCE; dy < VIEW_DISTANCE; dy++)
+		for (int dy = 0; dy < 1; dy++)//(int dy = -VIEW_DISTANCE; dy < VIEW_DISTANCE + 1; dy++)
 		{
-			for (int dz = -VIEW_DISTANCE; dz < VIEW_DISTANCE; dz++)
+			for (int dz = -VIEW_DISTANCE; dz < VIEW_DISTANCE + 1; dz++)
 			{
 				if (pow(dx, 2) + pow(dy, 2) + pow(dz, 2) > pow((VIEW_DISTANCE + 1), 2))
 				{
@@ -344,25 +384,62 @@ void change_chunks(glm::vec3 before, glm::vec3 after)
 	}
 
 	std::vector<glm::vec3> show_set, hide_set;
+
 	std::set_difference(after_set.begin(), after_set.end(), before_set.begin(), before_set.end(), std::inserter(show_set, show_set.begin()), compareVec());
 	std::set_difference(before_set.begin(), before_set.end(), after_set.begin(), after_set.end(), std::inserter(hide_set, hide_set.end()), compareVec());
 
 	for (auto chunk : show_set)
 	{
-		std::cout << "Showing: " << chunk.x << ", " << chunk.y << ", " << chunk.z << std::endl;
-		show_chunk(chunk);
+		// Show chunks, do immediate mode if first time
+		show_chunk(chunk, first_time);
 	}
-	for (auto chunk : hide_set)
+	// Dont hide any chunks if first time
+	if(!first_time)
 	{
-		std::cout << "Hiding: " << chunk.x << ", " << chunk.y << ", " << chunk.z << std::endl;
-		hide_chunk(chunk);
+		for (auto chunk : hide_set)
+		{
+			hide_chunk(chunk);
+		}
 	}
-	
 }
 
-void show_chunk(glm::vec3 chunk)
+void show_chunk(glm::vec3 chunk, bool immediate)
 {
+	if(immediate)
+		_show_chunk(chunk);
+	else
+		queue_function(_show_chunk, chunk);
 }
-void hide_chunk(glm::vec3 chunk)
+
+void _show_chunk(glm::vec3 chunk)
 {
+	//Make pair of vec3:Chunk called insert_chunk of (chunk_position, newchunkat(position))
+	std::pair<glm::vec3, Chunk> insert_chunk (chunk, Chunk(chunk));
+	chunks.insert(insert_chunk);
+}
+
+void hide_chunk(glm::vec3 chunk, bool immediate)
+{
+	if(immediate)
+		_hide_chunk(chunk);
+	else
+		queue_function(_hide_chunk, chunk);
+}
+
+void _hide_chunk(glm::vec3 chunk)
+{
+	chunks.erase(chunk);
+}
+
+glm::vec3 normalize_position(glm::vec3 position)
+{
+	// Accepts a position of any precision and returns the block containing that position
+	return glm::vec3(floor(position.x), floor(position.y), floor(position.z));
+}
+
+glm::vec3 position_to_chunk(glm::vec3 position)
+{
+	// Accepts a position of any precision and returns the chunk coordinates containing that position
+	glm::vec3 normalized_position = normalize_position(position);
+	return glm::vec3(floor(position.x / CHUNK_SIZE), /*floor(position.y / CHUNK_SIZE)*/0, floor(position.z / CHUNK_SIZE));
 }
