@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+voxel_engine
+
+# IDE
+.vscode/
