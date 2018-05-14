@@ -1,7 +1,6 @@
 #include <glad/glad.h>
 #include <vector>
 #include <array>
-#include "FastNoise.h"
 
 const int CHUNK_SIZE = 16;
 
@@ -32,14 +31,12 @@ Chunk::Chunk(glm::vec3 position)
 
 void Chunk::gen_voxels()
 {
-	FastNoise myNoise;
-	myNoise.SetNoiseType(FastNoise::SimplexFractal);
     // Generate Voxels
     for (int x = 0; x < CHUNK_SIZE; x++)
     {
         for (int z = 0; z < CHUNK_SIZE; z++)
         {
-			float height = (myNoise.GetNoise(world_position.x + x, world_position.z + z) + 1.0f) * 8;
+			float height = 2;
 			for (int y = 0; y < CHUNK_SIZE; y++)
 			{
 				if (y < height)
