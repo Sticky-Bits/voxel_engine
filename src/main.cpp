@@ -1,7 +1,7 @@
 // Hides the console on windows
 //#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 
-#include <glad/glad.h>
+#include <glad/glad.hpp>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -10,9 +10,9 @@
 #include <glm/gtx/hash.hpp> // Gives us vector hashes for maps
 #include <glm/vector_relational.hpp>
 
-#include "shaders/Shader.h"
-#include "Camera.h"
-#include "Chunk.h"
+#include "shaders/Shader.hpp"
+#include "Camera.hpp"
+#include "Chunk.hpp"
 
 #include <iostream>
 #include <vector>
