@@ -1,5 +1,5 @@
 # build and lib dirs
-build
+build/*
 lib/*
 
 # scons db
