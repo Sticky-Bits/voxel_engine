@@ -42,7 +42,7 @@ glm::vec3 position_to_chunk(glm::vec3 position);
 // settings
 const unsigned int SCR_WIDTH = 1920;
 const unsigned int SCR_HEIGHT = 1080;
-static const int VIEW_DISTANCE = 10;
+static const int VIEW_DISTANCE = 1;
 static const int TICKS_PER_SEC = 60;
 
 // camera
@@ -114,7 +114,9 @@ int main()
 	
 	// Draw in wireframe
 	glPointSize(5.0f);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glFrontFace(GL_CCW);
+	//glCullFace(GL_FRONT);
 
 	// load textures (we now use a utility function to keep the code more organized)
 	// -----------------------------------------------------------------------------
@@ -186,6 +188,7 @@ int main()
 			model = glm::translate(model, chunk.second.chunk_position * (float)CHUNK_SIZE);
 			lightingShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, chunk.second.vertices.size() / 6);
+			// glDrawElements(GL_TRIANGLES, chunk.second.faces.size(), GL_INT, 0);
 			/* std::cout << *it; ... */
 		}
 
