@@ -42,7 +42,7 @@ glm::vec3 position_to_chunk(glm::vec3 position);
 // settings
 const unsigned int SCR_WIDTH = 1920;
 const unsigned int SCR_HEIGHT = 1080;
-static const int VIEW_DISTANCE = 1;
+static const int VIEW_DISTANCE = 0;
 static const int TICKS_PER_SEC = 60;
 
 // camera
@@ -152,8 +152,9 @@ int main()
 		// Check to see if player moved chunks
 		glm::vec3 last_chunk = current_chunk;
 		current_chunk = position_to_chunk(camera.Position);
-		if (current_chunk != last_chunk)
+		if (current_chunk != last_chunk && VIEW_DISTANCE != 0)
 		{
+			// Don't change for special debug case vd=0
 			change_chunks(last_chunk, current_chunk);
 		}
 
@@ -328,18 +329,25 @@ struct compareVec
 void change_chunks(glm::vec3 before, glm::vec3 after, bool first_time/* = false*/)
 {
 	std::set<glm::vec3, compareVec > before_set, after_set;
-	for (int dx = -VIEW_DISTANCE; dx < VIEW_DISTANCE + 1; dx++)
+	if(VIEW_DISTANCE == 0)
 	{
-		for (int dy = 0; dy < 1; dy++)//(int dy = -VIEW_DISTANCE; dy < VIEW_DISTANCE + 1; dy++)
+		// Special debug case
+		before_set.insert(glm::vec3(before.x, before.y, before.z));
+		after_set.insert(glm::vec3(0, 0, 0));
+	} else {
+		for (int dx = -VIEW_DISTANCE; dx < VIEW_DISTANCE + 1; dx++)
 		{
-			for (int dz = -VIEW_DISTANCE; dz < VIEW_DISTANCE + 1; dz++)
+			for (int dy = 0; dy < 1; dy++)//(int dy = -VIEW_DISTANCE; dy < VIEW_DISTANCE + 1; dy++)
 			{
-				if (pow(dx, 2) + pow(dy, 2) + pow(dz, 2) > pow((VIEW_DISTANCE + 1), 2))
+				for (int dz = -VIEW_DISTANCE; dz < VIEW_DISTANCE + 1; dz++)
 				{
-					continue;
+					if (pow(dx, 2) + pow(dy, 2) + pow(dz, 2) > pow((VIEW_DISTANCE + 1), 2))
+					{
+						continue;
+					}
+					before_set.insert(glm::vec3(before.x + dx, before.y + dy, before.z + dz));
+					after_set.insert(glm::vec3(after.x + dx, after.y + dy, after.z + dz));
 				}
-				before_set.insert(glm::vec3(before.x + dx, before.y + dy, before.z + dz));
-				after_set.insert(glm::vec3(after.x + dx, after.y + dy, after.z + dz));
 			}
 		}
 	}

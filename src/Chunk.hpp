@@ -34,7 +34,7 @@ Chunk::Chunk(glm::vec3 position)
 	chunk_position = position;
 	world_position = chunk_position * (float)CHUNK_SIZE;
     generate_voxels();
-    generate_mesh_dumb();
+    generate_mesh_greedy();
 	load_mesh();
 }
 
@@ -152,12 +152,12 @@ void Chunk::generate_mesh_greedy()
 						vertices.push_back(x[0]                );//x1
 						vertices.push_back(x[1]                );//y1
 						vertices.push_back(x[2]                );//z1
-						vertices.push_back(x[0] + du[0] + dv[0]);//x3
-						vertices.push_back(x[1] + du[1] + dv[1]);//y3
-						vertices.push_back(x[2] + du[2] + dv[2]);//z3
 						vertices.push_back(x[0]         + dv[0]);//x4
 						vertices.push_back(x[1]         + dv[1]);//y4
 						vertices.push_back(x[2]         + dv[2]);//z4
+						vertices.push_back(x[0] + du[0] + dv[0]);//x3
+						vertices.push_back(x[1] + du[1] + dv[1]);//y3
+						vertices.push_back(x[2] + du[2] + dv[2]);//z3
 
 						// // I think faces are indices
 						// faces.push_back(vertex_count);
@@ -168,7 +168,21 @@ void Chunk::generate_mesh_greedy()
 						// faces.push_back(vertex_count+2);
 						// faces.push_back(vertex_count+3);
 						// // faces.push_back(c); // Might be color?
-					}
+
+						// TODO: Check correct winding order for face culling
+                        // Zero out mask
+                        for (l=0; l<h; ++l)
+                        {
+                            for (k=0; k<w; ++k)
+                            {
+                                mask[n+k+l*CHUNK_SIZE] = 0;
+                            }
+                        }
+                        //Increment counters and continue
+                        i += w; n += w;
+                    } else {
+                        ++i; ++n;
+                    }
 				}
 			}
 		}
