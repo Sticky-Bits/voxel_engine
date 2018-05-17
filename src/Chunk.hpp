@@ -43,16 +43,27 @@ void Chunk::generate_voxels()
 	// TODO: Change from bool to int? for different types of voxels
 	// Then generate meshes seperately for different types
 	// And push a color/texture to shader per type
+	const float PI = 3.141592653;
 	int i = 0;
 	for (int x = 0; x < CHUNK_SIZE; x++)
 	for (int y = 0; y < CHUNK_SIZE; y++)
 	for (int z = 0; z < CHUNK_SIZE; z++, i++)
     {
-		if (y<20) {
-			voxels[i] = 1;
-		} else {
+		float h0 = 3.0 * sin(PI * z / 12.0 - PI * x * 0.1) + 27;    
+		if(y > h0+1) {
 			voxels[i] = 0;
 		}
+		if(h0 <= y) {
+			voxels[i] = 1;
+		}
+		float h1 = 2.0 * sin(PI * z * 0.25 - PI * x * 0.3) + 20;
+		if(h1 <= y) {
+			voxels[i] = 2;
+		}
+		if(2 < y) {
+			voxels[i] = random() < 0.1 ? 3 : 4;
+		}
+		voxels[i] = 5;
 	}
 }
 

@@ -207,7 +207,7 @@ int main()
 	// optional: de-allocate all resources once they've outlived their purpose:
 	// ------------------------------------------------------------------------
 
-	// for chunk in chunks:
+	// clean up chunks
 	/*for (std::vector<Chunk>::iterator it = chunks.begin(); it != chunks.end(); ++it) {
 		Chunk& chunk = *it;
 		chunk.delete_buffers();
