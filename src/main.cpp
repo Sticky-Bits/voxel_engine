@@ -105,7 +105,7 @@ int main()
 
 	// build and compile shaders
 	// -------------------------
-	Shader lightingShader("shaders/vertex.glsl", "shaders/fragment.glsl");
+	Shader lightingShader("shaders/vert_light.glsl", "shaders/frag_light.glsl");
 
 	// set up chunks
 	// ------------------------------------------------------------------
