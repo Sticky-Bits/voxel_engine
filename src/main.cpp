@@ -11,8 +11,8 @@
 #include <glm/vector_relational.hpp>
 
 #include "shaders/Shader.hpp"
-#include "Camera.hpp"
-#include "Chunk.hpp"
+#include "camera.hpp"
+#include "chunk.hpp"
 
 #include <iostream>
 #include <vector>
@@ -228,6 +228,11 @@ void processInput(GLFWwindow *window)
 
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 		std::cout << "Number of loaded chunks: " << chunks.size() << std::endl;
+		if (chunks.size() == 1){
+			for (auto chunk : chunks) {
+				std::cout << "Chunk verts: " << chunk.second.vertices.size() << std::endl;
+			}
+		}
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);

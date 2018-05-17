@@ -1,32 +1,9 @@
 #include <glad/glad.hpp>
 #include <vector>
 #include <array>
+#include <glm/glm.hpp>
 
-const int CHUNK_SIZE = 16;
-const int CHUNK_SIZE_SQUARED = CHUNK_SIZE * CHUNK_SIZE;
-const int CHUNK_SIZE_CUBED = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
-
-class Chunk
-{
-public:
-	Chunk(glm::vec3 chunk_position);
-    void generate_voxels();
-    void generate_mesh_greedy();
-	void generate_mesh_dumb();
-	void load_mesh();
-	void delete_buffers();
-	int xyz_to_index(int x, int y, int z);
-	void index_to_xyz(int index, int *x, int *y, int *z);
-
-    std::vector<float> vertices;
-    std::vector<int> indices;
-    int voxels[CHUNK_SIZE_CUBED];
-	glm::vec3 chunk_position;
-	glm::vec3 world_position;
-	unsigned int VBO, VAO, EBO;
-
-private:
-};
+#include "chunk.hpp"
 
 Chunk::Chunk(glm::vec3 position)
 {
@@ -49,21 +26,22 @@ void Chunk::generate_voxels()
 	for (int y = 0; y < CHUNK_SIZE; y++)
 	for (int z = 0; z < CHUNK_SIZE; z++, i++)
     {
-		float h0 = 3.0 * sin(PI * z / 12.0 - PI * x * 0.1) + 27;    
-		if(y > h0+1) {
-			voxels[i] = 0;
-		}
-		if(h0 <= y) {
-			voxels[i] = 1;
-		}
-		float h1 = 2.0 * sin(PI * z * 0.25 - PI * x * 0.3) + 20;
-		if(h1 <= y) {
-			voxels[i] = 2;
-		}
-		if(2 < y) {
-			voxels[i] = random() < 0.1 ? 3 : 4;
-		}
-		voxels[i] = 5;
+		voxels[i] = 1;
+		// float h0 = 3.0 * sin(PI * z / 12.0 - PI * x * 0.1) + 27;    
+		// if(y > h0+1) {
+		// 	voxels[i] = 0;
+		// }
+		// if(h0 <= y) {
+		// 	voxels[i] = 1;
+		// }
+		// float h1 = 2.0 * sin(PI * z * 0.25 - PI * x * 0.3) + 20;
+		// if(h1 <= y) {
+		// 	voxels[i] = 2;
+		// }
+		// if(2 < y) {
+		// 	voxels[i] = random() < 0.1 ? 3 : 4;
+		// }
+		// voxels[i] = 5;
 	}
 }
 
