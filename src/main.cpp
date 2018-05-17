@@ -189,7 +189,6 @@ int main()
 			lightingShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, chunk.second.vertices.size() / 6);
 			// glDrawElements(GL_TRIANGLES, chunk.second.faces.size(), GL_INT, 0);
-			/* std::cout << *it; ... */
 		}
 
 		float start = glfwGetTime();
@@ -225,15 +224,9 @@ void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
 		std::cout << "Number of loaded chunks: " << chunks.size() << std::endl;
-		if (chunks.size() == 1){
-			for (auto chunk : chunks) {
-				std::cout << "Chunk verts: " << chunk.second.vertices.size() << std::endl;
-			}
-		}
-
+	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
