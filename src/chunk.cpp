@@ -2,6 +2,7 @@
 #include <vector>
 #include <array>
 #include <glm/glm.hpp>
+#include <iostream>
 
 #include "chunk.hpp"
 
@@ -10,7 +11,7 @@ Chunk::Chunk(glm::vec3 position)
 	chunk_position = position;
 	world_position = chunk_position * (float)CHUNK_SIZE;
     generate_voxels();
-    generate_mesh_greedy();
+	generate_mesh_greedy();
 	load_mesh();
 }
 
@@ -26,27 +27,38 @@ void Chunk::generate_voxels()
 	for (int y = 0; y < CHUNK_SIZE; y++)
 	for (int z = 0; z < CHUNK_SIZE; z++, i++)
     {
-		voxels[i] = 1;
-		// float h0 = 3.0 * sin(PI * z / 12.0 - PI * x * 0.1) + 27;    
-		// if(y > h0+1) {
-		// 	voxels[i] = 0;
-		// }
-		// if(h0 <= y) {
+		// if (y < CHUNK_SIZE/2)
 		// 	voxels[i] = 1;
-		// }
-		// float h1 = 2.0 * sin(PI * z * 0.25 - PI * x * 0.3) + 20;
-		// if(h1 <= y) {
+		// else
 		// 	voxels[i] = 2;
-		// }
-		// if(2 < y) {
-		// 	voxels[i] = random() < 0.1 ? 3 : 4;
-		// }
-		// voxels[i] = 5;
+
+		// Hills
+		float h0 = 3.0 * sin(PI * z / 12.0 - PI * x * 0.1) + 27;
+		if(y > h0+1) {
+			voxels[i] = 0;
+			continue;
+		}
+		if(h0 <= y) {
+			voxels[i] = 1;
+			continue;
+		}
+		float h1 = 2.0 * sin(PI * z * 0.25 - PI * x * 0.3) + 20;
+		if(h1 <= y) {
+			voxels[i] = 2;
+			continue;
+		}
+		if(2 < y) {
+			voxels[i] = random() < 0.1 ? 3 : 4;
+			continue;
+		}
+		voxels[i] = 5;
+
+		// Valley
+		//y <= (z*z + x*x) * 31 / (32*32*2) + 1 ? voxels[i] = 1 : voxels[i] = 0;
 	}
 }
 
 int Chunk::xyz_to_index(int x, int y, int z){
-	// return (x * CHUNK_SIZE_SQUARED) + (y * CHUNK_SIZE) + z;
 	return z + CHUNK_SIZE * (y + CHUNK_SIZE * x);
 }
 
@@ -92,11 +104,12 @@ void Chunk::generate_mesh_greedy()
             {
                 for (i = 0; i < CHUNK_SIZE; )
                 {
-					int c = mask[n];
-                    if((bool)c)
+					int voxel_type = mask[n];
+					// Only generate vertices for non-zero voxel types
+                    if((bool)voxel_type)
                     {
                         //Compute width
-                        for (w = 1; c == mask[n+w] && i+w < CHUNK_SIZE; ++w)
+                        for (w = 1; voxel_type == mask[n+w] && i+w < CHUNK_SIZE; ++w)
                         {}
                         //Compute height
                         bool done = false;
@@ -104,7 +117,7 @@ void Chunk::generate_mesh_greedy()
                         {
                             for (k = 0; k < w; ++k)
                             {
-                                if (c != mask[n+k+h*CHUNK_SIZE])
+                                if (voxel_type != mask[n+k+h*CHUNK_SIZE])
                                 {
                                     done = true;
                                     break;
@@ -120,45 +133,48 @@ void Chunk::generate_mesh_greedy()
 						x[v] = j;
 						int du[] = {0,0,0};
 						int dv[] = {0,0,0};
-						if(c > 0){
+						if(voxel_type > 0){
 							dv[v] = h;
 							du[u] = w;
 						} else {
-							c = -c;
+							voxel_type = -voxel_type;
 							du[v] = h;
 							dv[u] = w;
 						}
 						int vertex_count = vertices.size();
-						vertices.push_back(x[0]                );//x1
-						vertices.push_back(x[1]                );//y1
-						vertices.push_back(x[2]                );//z1
-						vertices.push_back(x[0] + du[0]        );//x2
-						vertices.push_back(x[1] + du[1]        );//y2
-						vertices.push_back(x[2] + du[2]        );//z2
-						vertices.push_back(x[0] + du[0] + dv[0]);//x3
-						vertices.push_back(x[1] + du[1] + dv[1]);//y3
-						vertices.push_back(x[2] + du[2] + dv[2]);//z3
-						vertices.push_back(x[0]                );//x1
-						vertices.push_back(x[1]                );//y1
-						vertices.push_back(x[2]                );//z1
-						vertices.push_back(x[0]         + dv[0]);//x4
-						vertices.push_back(x[1]         + dv[1]);//y4
-						vertices.push_back(x[2]         + dv[2]);//z4
-						vertices.push_back(x[0] + du[0] + dv[0]);//x3
-						vertices.push_back(x[1] + du[1] + dv[1]);//y3
-						vertices.push_back(x[2] + du[2] + dv[2]);//z3
+						// TODO: Check correct winding order for face culling
+						vertices.push_back(x[0]                );//x0
+						vertices.push_back(x[1]                );//y0
+						vertices.push_back(x[2]                );//z0
+						vertices.push_back(x[0] + du[0]        );//x1
+						vertices.push_back(x[1] + du[1]        );//y1
+						vertices.push_back(x[2] + du[2]        );//z1
+						vertices.push_back(x[0] + du[0] + dv[0]);//x2
+						vertices.push_back(x[1] + du[1] + dv[1]);//y2
+						vertices.push_back(x[2] + du[2] + dv[2]);//z2
+						vertices.push_back(x[0]                );//x0
+						vertices.push_back(x[1]                );//y0
+						vertices.push_back(x[2]                );//z0
+						vertices.push_back(x[0]         + dv[0]);//x3
+						vertices.push_back(x[1]         + dv[1]);//y3
+						vertices.push_back(x[2]         + dv[2]);//z3
+						vertices.push_back(x[0] + du[0] + dv[0]);//x2
+						vertices.push_back(x[1] + du[1] + dv[1]);//y2
+						vertices.push_back(x[2] + du[2] + dv[2]);//z2
 
-						// // push indicies. There will be some overlap here, but that's ok.
+						// TODO: Move to using indexed drawing + EBOs
+						// // push indicies. There will be some overlap here, possible optimization
 						// indices.push_back(vertex_count);
 						// indices.push_back(vertex_count+1);
 						// indices.push_back(vertex_count+2);
-						// // indices.push_back(c); // Might be color?
 						// indices.push_back(vertex_count);
 						// indices.push_back(vertex_count+2);
 						// indices.push_back(vertex_count+3);
-						// // indices.push_back(c); // Might be color?
 
-						// TODO: Check correct winding order for face culling
+						// TODO: use voxel_type to generate colors or something
+
+						// TODO: generate normals
+
                         // Zero out mask
                         for (l=0; l<h; ++l)
                         {

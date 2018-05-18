@@ -187,7 +187,7 @@ int main()
 			glm::mat4 model;
 			model = glm::translate(model, chunk.second.chunk_position * (float)CHUNK_SIZE);
 			lightingShader.setMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, chunk.second.vertices.size() / 6);
+			glDrawArrays(GL_TRIANGLES, 0, chunk.second.vertices.size() / 3);
 			// glDrawElements(GL_TRIANGLES, chunk.second.faces.size(), GL_INT, 0);
 		}
 
