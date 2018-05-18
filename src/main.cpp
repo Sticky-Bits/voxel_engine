@@ -113,9 +113,10 @@ int main()
 	
 	// Draw in wireframe
 	glPointSize(5.0f);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	//glFrontFace(GL_CCW);
-	//glCullFace(GL_FRONT);
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	// glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
 
 	// load textures (we now use a utility function to keep the code more organized)
 	// -----------------------------------------------------------------------------
@@ -187,7 +188,7 @@ int main()
 			glm::mat4 model;
 			model = glm::translate(model, chunk.second.chunk_position * (float)CHUNK_SIZE);
 			lightingShader.setMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, chunk.second.vertices.size() / 3);
+			glDrawArrays(GL_TRIANGLES, 0, chunk.second.vertices.size() / 9);
 			// glDrawElements(GL_TRIANGLES, chunk.second.faces.size(), GL_INT, 0);
 		}
 

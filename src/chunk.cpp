@@ -78,6 +78,29 @@ void Chunk::generate_mesh_greedy()
         , q[] = {0,0,0};
         int mask[CHUNK_SIZE_SQUARED] = {0};
         q[d] = 1;
+
+		// Set normals for this sweep
+		float normalx, normaly, normalz;
+		// d0 = x, d1 = y, d2 = z
+		if (d == 0)
+		{
+			normalx = 1.0f;
+			normaly = 0.0f;
+			normalz = 0.0f;
+		}
+		else if (d == 1)
+		{
+			normalx = 0.0f;
+			normaly = 1.0f;
+			normalz = 0.0f;
+		}
+		else // d == 2
+		{
+			normalx = 0.0f;
+			normaly = 0.0f;
+			normalz = 1.0f;
+		}
+
         for (x[d] = -1; x[d] < CHUNK_SIZE; )
         {
             // Compute mask
@@ -141,29 +164,81 @@ void Chunk::generate_mesh_greedy()
 							du[v] = h;
 							dv[u] = w;
 						}
+						// Get current vertex size for adding indicies later
 						int vertex_count = vertices.size();
+
+						// Set colors
+						float color_r, color_g, color_b;
+						switch (voxel_type) {
+							// Grass
+							case 1: color_r = 0.10f; color_g = 0.86f; color_b = 0.19f; break;
+							// Dirt
+							case 2: color_r = 0.58f; color_g = 0.29f; color_b = 0.00f; break;
+							// Stone
+							case 3: color_r = 0.34f; color_g = 0.34f; color_b = 0.34f; break;
+							// Dark Stone / Coal
+							case 4: color_r = 0.66f; color_g = 0.66f; color_b = 0.66f; break;
+							// lava? / red
+							case 5: color_r = 0.50f; color_g = 0.00f; color_b = 0.00f; break;
+						}
 						// TODO: Check correct winding order for face culling
 						vertices.push_back(x[0]                );//x0
 						vertices.push_back(x[1]                );//y0
 						vertices.push_back(x[2]                );//z0
+						vertices.push_back(normalx);
+						vertices.push_back(normaly);
+						vertices.push_back(normalz);
+						vertices.push_back(color_r);
+						vertices.push_back(color_g);
+						vertices.push_back(color_b);
 						vertices.push_back(x[0] + du[0]        );//x1
 						vertices.push_back(x[1] + du[1]        );//y1
 						vertices.push_back(x[2] + du[2]        );//z1
+						vertices.push_back(normalx);
+						vertices.push_back(normaly);
+						vertices.push_back(normalz);
+						vertices.push_back(color_r);
+						vertices.push_back(color_g);
+						vertices.push_back(color_b);
 						vertices.push_back(x[0] + du[0] + dv[0]);//x2
 						vertices.push_back(x[1] + du[1] + dv[1]);//y2
 						vertices.push_back(x[2] + du[2] + dv[2]);//z2
+						vertices.push_back(normalx);
+						vertices.push_back(normaly);
+						vertices.push_back(normalz);
+						vertices.push_back(color_r);
+						vertices.push_back(color_g);
+						vertices.push_back(color_b);
 						vertices.push_back(x[0]                );//x0
 						vertices.push_back(x[1]                );//y0
 						vertices.push_back(x[2]                );//z0
-						vertices.push_back(x[0]         + dv[0]);//x3
-						vertices.push_back(x[1]         + dv[1]);//y3
-						vertices.push_back(x[2]         + dv[2]);//z3
+						vertices.push_back(normalx);
+						vertices.push_back(normaly);
+						vertices.push_back(normalz);
+						vertices.push_back(color_r);
+						vertices.push_back(color_g);
+						vertices.push_back(color_b);
 						vertices.push_back(x[0] + du[0] + dv[0]);//x2
 						vertices.push_back(x[1] + du[1] + dv[1]);//y2
 						vertices.push_back(x[2] + du[2] + dv[2]);//z2
+						vertices.push_back(normalx);
+						vertices.push_back(normaly);
+						vertices.push_back(normalz);
+						vertices.push_back(color_r);
+						vertices.push_back(color_g);
+						vertices.push_back(color_b);
+						vertices.push_back(x[0]         + dv[0]);//x3
+						vertices.push_back(x[1]         + dv[1]);//y3
+						vertices.push_back(x[2]         + dv[2]);//z3
+						vertices.push_back(normalx);
+						vertices.push_back(normaly);
+						vertices.push_back(normalz);
+						vertices.push_back(color_r);
+						vertices.push_back(color_g);
+						vertices.push_back(color_b);
 
 						// TODO: Move to using indexed drawing + EBOs
-						// // push indicies. There will be some overlap here, possible optimization
+						// push indicies. There will be some overlap here, possible optimization
 						// indices.push_back(vertex_count);
 						// indices.push_back(vertex_count+1);
 						// indices.push_back(vertex_count+2);
@@ -259,12 +334,15 @@ void Chunk::load_mesh(){
 	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	// glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), &indices[0], GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	// Position
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	// glEnableVertexAttribArray(1);
-	// glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	// glEnableVertexAttribArray(2);
+	// Normals
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	// Color
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 }
 
 void Chunk::delete_buffers()
