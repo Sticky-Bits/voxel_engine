@@ -3,6 +3,7 @@
 #include <array>
 #include <glm/glm.hpp>
 #include <iostream>
+#include <functional>
 
 #include "chunk.hpp"
 
@@ -11,7 +12,7 @@ Chunk::Chunk(glm::vec3 position)
 	chunk_position = position;
 	world_position = chunk_position * (float)CHUNK_SIZE;
     generate_voxels();
-	generate_mesh_greedy();
+	future = std::async(std::bind(&Chunk::generate_mesh_greedy, this));
 	load_mesh();
 }
 
@@ -70,6 +71,7 @@ void Chunk::index_to_xyz(int index, int *x, int *y, int *z){
 
 void Chunk::generate_mesh_greedy()
 {
+	mesh_ready = false;
 	for (int d=0; d<3; d++){
 		int i, j, k, l, w, h
         , u = (d+1)%3
@@ -267,9 +269,13 @@ void Chunk::generate_mesh_greedy()
 			}
 		}
 	}
+	// Add artificial wait for testing
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+	mesh_ready = true;
 }
 
 void Chunk::generate_mesh_dumb(){
+	mesh_ready = false;
 	// Define a dumb mesh generator. Might be useful for testing
 	// Doesn't actually work atm :(
 	int x[] = {0,0,0}; int n = 0;
@@ -319,6 +325,7 @@ void Chunk::generate_mesh_dumb(){
 			}
 		}
 	}
+	mesh_ready = true;
 }
 
 void Chunk::load_mesh(){

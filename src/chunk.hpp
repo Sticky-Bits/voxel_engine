@@ -1,4 +1,5 @@
 #include <vector>
+#include <future>
 
 const int CHUNK_SIZE = 32;
 const int CHUNK_SIZE_SQUARED = CHUNK_SIZE * CHUNK_SIZE;
@@ -22,6 +23,8 @@ public:
 	glm::vec3 chunk_position;
 	glm::vec3 world_position;
 	unsigned int VBO, VAO, EBO;
+	bool mesh_ready = false;
+	std::future<void> future;
 
 private:
 };
