@@ -17,6 +17,7 @@ Chunk::Chunk(glm::vec3 position)
 
 void Chunk::generate_voxels()
 {
+	srand(5);
     // Generate Voxels
 	// TODO: Change from bool to int? for different types of voxels
 	// Then generate meshes seperately for different types
@@ -48,7 +49,7 @@ void Chunk::generate_voxels()
 			continue;
 		}
 		if(2 < y) {
-			voxels[i] = random() < 0.1 ? 3 : 4;
+			voxels[i] = random() % 100 < 10 ? 3 : 4;
 			continue;
 		}
 		voxels[i] = 5;
