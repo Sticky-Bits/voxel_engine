@@ -71,6 +71,10 @@ void Chunk::index_to_xyz(int index, int *x, int *y, int *z){
 
 void Chunk::generate_mesh_greedy()
 {
+	// fake wait for testing
+	std::cout << "pre-wait" << std::endl;
+	std::this_thread::sleep_for(std::chrono::seconds(5));
+	std::cout << "post-wait" << std::endl;
 	mesh_ready = false;
 	for (int d=0; d<3; d++){
 		int i, j, k, l, w, h
