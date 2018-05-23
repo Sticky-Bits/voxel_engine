@@ -23,17 +23,28 @@ void Chunk::generate_voxels()
     // Generate Voxels
 	const float PI = 3.141592653;
 	int i = 0;
+	int octaves = 1;
+	int lacunarity = 2;
+	int persistance = 0.5;
+	int scale = 2;
 	for (int x = 0; x < CHUNK_SIZE; x++)
 	for (int y = 0; y < CHUNK_SIZE; y++)
 	for (int z = 0; z < CHUNK_SIZE; z++, i++)
     {
 		// Noise
-		float freq = 1.0f;
-		int xpos = world_position.x + x;
-		int zpos = world_position.z + z;
-		float height = (myNoise.GetNoise(freq * xpos, freq * zpos) + 1.0f) * 16;
-		if (y < height)
-			voxels[i] = 1;
+		float xpos = (world_position.x + x) / scale;
+		float zpos = (world_position.z + z) / scale;
+		float ypos = (world_position.y + y) / scale;
+		float height = 0;
+		for (int o = 0; o < octaves; o++){
+			float freq = pow(lacunarity, o);
+			float amp  = pow(persistance, o);
+			height += myNoise.GetNoise(xpos * freq, zpos * freq) * amp;
+		}
+		height *= 16;
+		height = pow(height, 3);
+		if (ypos < height)
+			voxels[i] = 3;
 		else
 			voxels[i] = 0;	
 

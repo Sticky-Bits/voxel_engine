@@ -42,7 +42,7 @@ glm::vec3 position_to_chunk(glm::vec3 position);
 // settings
 const unsigned int SCR_WIDTH = 1920;
 const unsigned int SCR_HEIGHT = 1080;
-static const int VIEW_DISTANCE = 10;
+static const int VIEW_DISTANCE = 5;
 static const int TICKS_PER_SEC = 60;
 
 // camera
@@ -335,7 +335,7 @@ void change_chunks(glm::vec3 before, glm::vec3 after, bool first_time/* = false*
 	} else {
 		for (int dx = -VIEW_DISTANCE; dx < VIEW_DISTANCE + 1; dx++)
 		{
-			for (int dy = 0; dy < 1; dy++)//(int dy = -VIEW_DISTANCE; dy < VIEW_DISTANCE + 1; dy++)
+			for /*(int dy = 0; dy < 1; dy++)*/(int dy = -VIEW_DISTANCE; dy < VIEW_DISTANCE + 1; dy++)
 			{
 				for (int dz = -VIEW_DISTANCE; dz < VIEW_DISTANCE + 1; dz++)
 				{
