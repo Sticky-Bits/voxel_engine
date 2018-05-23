@@ -42,7 +42,7 @@ glm::vec3 position_to_chunk(glm::vec3 position);
 // settings
 const unsigned int SCR_WIDTH = 1920;
 const unsigned int SCR_HEIGHT = 1080;
-static const int VIEW_DISTANCE = 0;
+static const int VIEW_DISTANCE = 10;
 static const int TICKS_PER_SEC = 60;
 
 // camera

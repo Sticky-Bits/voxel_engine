@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "chunk.hpp"
+#include "fastnoise.hpp"
 
 Chunk::Chunk(glm::vec3 position)
 {
@@ -17,6 +18,8 @@ Chunk::Chunk(glm::vec3 position)
 
 void Chunk::generate_voxels()
 {
+	FastNoise myNoise;
+	myNoise.SetNoiseType(FastNoise::SimplexFractal);
     // Generate Voxels
 	const float PI = 3.141592653;
 	int i = 0;
@@ -24,33 +27,44 @@ void Chunk::generate_voxels()
 	for (int y = 0; y < CHUNK_SIZE; y++)
 	for (int z = 0; z < CHUNK_SIZE; z++, i++)
     {
+		// Noise
+		float freq = 1.0f;
+		int xpos = world_position.x + x;
+		int zpos = world_position.z + z;
+		float height = (myNoise.GetNoise(freq * xpos, freq * zpos) + 1.0f) * 16;
+		if (y < height)
+			voxels[i] = 1;
+		else
+			voxels[i] = 0;	
+
+		// // Basic Flat
 		// if (y < CHUNK_SIZE/2)
 		// 	voxels[i] = 1;
 		// else
+		// 	voxels[i] = 0;
+
+		// // Hills
+		// float h0 = 3.0 * sin(PI * z / 12.0 - PI * x * 0.1) + 27;
+		// if(y > h0+1) {
+		// 	voxels[i] = 0;
+		// 	continue;
+		// }
+		// if(h0 <= y) {
+		// 	voxels[i] = 1;
+		// 	continue;
+		// }
+		// float h1 = 2.0 * sin(PI * z * 0.25 - PI * x * 0.3) + 20;
+		// if(h1 <= y) {
 		// 	voxels[i] = 2;
+		// 	continue;
+		// }
+		// if(2 < y) {
+		// 	voxels[i] = random() < 0.1 ? 3 : 4;
+		// 	continue;
+		// }
+		// voxels[i] = 5;
 
-		// Hills
-		float h0 = 3.0 * sin(PI * z / 12.0 - PI * x * 0.1) + 27;
-		if(y > h0+1) {
-			voxels[i] = 0;
-			continue;
-		}
-		if(h0 <= y) {
-			voxels[i] = 1;
-			continue;
-		}
-		float h1 = 2.0 * sin(PI * z * 0.25 - PI * x * 0.3) + 20;
-		if(h1 <= y) {
-			voxels[i] = 2;
-			continue;
-		}
-		if(2 < y) {
-			voxels[i] = random() < 0.1 ? 3 : 4;
-			continue;
-		}
-		voxels[i] = 5;
-
-		// Valley
+		// // Valley
 		//y <= (z*z + x*x) * 31 / (32*32*2) + 1 ? voxels[i] = 1 : voxels[i] = 0;
 	}
 }
