@@ -183,7 +183,7 @@ int main()
         //glBindTexture(GL_TEXTURE_2D, diffuseMap);
 		
 		// Draw Chunks
-		for (auto chunk : chunks) {
+		for (auto const & chunk : chunks) {
 			glBindVertexArray(chunk.second.VAO);
 			glm::mat4 model;
 			model = glm::translate(model, chunk.second.chunk_position * (float)CHUNK_SIZE);
@@ -381,8 +381,7 @@ void show_chunk(glm::vec3 chunk, bool immediate)
 void _show_chunk(glm::vec3 chunk)
 {
 	//Make pair of vec3:Chunk called insert_chunk of (chunk_position, newchunkat(position))
-	std::pair<glm::vec3, Chunk> insert_chunk (chunk, Chunk(chunk));
-	chunks.insert(insert_chunk);
+	chunks.emplace(chunk, Chunk(chunk));
 }
 
 void hide_chunk(glm::vec3 chunk, bool immediate)
