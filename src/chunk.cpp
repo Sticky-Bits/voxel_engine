@@ -18,9 +18,6 @@ Chunk::Chunk(glm::vec3 position)
 void Chunk::generate_voxels()
 {
     // Generate Voxels
-	// TODO: Change from bool to int? for different types of voxels
-	// Then generate meshes seperately for different types
-	// And push a color/texture to shader per type
 	const float PI = 3.141592653;
 	int i = 0;
 	for (int x = 0; x < CHUNK_SIZE; x++)
@@ -181,7 +178,6 @@ void Chunk::generate_mesh_greedy()
 							// lava? / red
 							case 5: color_r = 0.50f; color_g = 0.00f; color_b = 0.00f; break;
 						}
-						// TODO: Check correct winding order for face culling
 						vertices.push_back(x[0]                );//x0
 						vertices.push_back(x[1]                );//y0
 						vertices.push_back(x[2]                );//z0
@@ -236,19 +232,6 @@ void Chunk::generate_mesh_greedy()
 						vertices.push_back(color_r);
 						vertices.push_back(color_g);
 						vertices.push_back(color_b);
-
-						// TODO: Move to using indexed drawing + EBOs
-						// push indicies. There will be some overlap here, possible optimization
-						// indices.push_back(vertex_count);
-						// indices.push_back(vertex_count+1);
-						// indices.push_back(vertex_count+2);
-						// indices.push_back(vertex_count);
-						// indices.push_back(vertex_count+2);
-						// indices.push_back(vertex_count+3);
-
-						// TODO: use voxel_type to generate colors or something
-
-						// TODO: generate normals
 
                         // Zero out mask
                         for (l=0; l<h; ++l)
