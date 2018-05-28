@@ -10,3 +10,4 @@ bin/*
 
 # IDE
 .vscode/
+.vs/

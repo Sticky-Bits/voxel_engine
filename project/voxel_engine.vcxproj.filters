@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="source\renderer">
+      <UniqueIdentifier>{3b4f7355-b8f6-4c35-8ca8-3a83861a90e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\blocks">
+      <UniqueIdentifier>{096d4358-d26f-4d9d-9b6f-30963b9b328c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\shader">
+      <UniqueIdentifier>{da52eb2e-3b01-4b10-85b7-e989be295d14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\glad">
+      <UniqueIdentifier>{f5900525-c0a3-45b2-a8ac-4400da4e4739}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\source\blocks\ChunkManager.cpp">
+      <Filter>source\blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\blocks\FastNoise.cpp">
+      <Filter>source\blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\blocks\Chunk.cpp">
+      <Filter>source\blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\renderer\Renderer.cpp">
+      <Filter>source\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\renderer\Mesh.cpp">
+      <Filter>source\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Game.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Input.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\main.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Settings.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Window.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\glad\glad.cpp">
+      <Filter>source\glad</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\source\blocks\ChunkManager.h">
+      <Filter>source\blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\blocks\FastNoise.h">
+      <Filter>source\blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\blocks\Chunk.h">
+      <Filter>source\blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\renderer\Mesh.h">
+      <Filter>source\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\renderer\Renderer.h">
+      <Filter>source\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\renderer\Camera.h">
+      <Filter>source\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Game.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Settings.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Util.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Window.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\shader\Shader.h">
+      <Filter>source\shader</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\source\shader\vert_light.glsl">
+      <Filter>source\shader</Filter>
+    </None>
+    <None Include="..\source\shader\frag_light.glsl">
+      <Filter>source\shader</Filter>
+    </None>
+  </ItemGroup>
+</Project>
