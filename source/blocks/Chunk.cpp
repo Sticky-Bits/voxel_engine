@@ -21,7 +21,6 @@ void Chunk::setup()
 {
 	generate_voxels();
 	generate_mesh_greedy();
-	load_mesh();
 }
 
 void Chunk::generate_voxels()
@@ -39,9 +38,9 @@ void Chunk::generate_voxels()
 			for (int z = 0; z < CHUNK_SIZE; z++, i++)
 			{
 				// Noise
-				float xpos = (world_position.x + x) / scale;
-				float zpos = (world_position.z + z) / scale;
-				float ypos = (world_position.y + y) / scale;
+				float xpos = (m_position.x + x) / scale;
+				float zpos = (m_position.z + z) / scale;
+				float ypos = (m_position.y + y) / scale;
 				float height = 0;
 				height += myNoise.GetNoise(xpos, zpos);
 				height *= 64;
@@ -201,8 +200,6 @@ void Chunk::generate_mesh_greedy()
 							du[v] = h;
 							dv[u] = w;
 						}
-						// Get current vertex size for adding indicies later
-						int vertex_count = vertices.size();
 
 						// Set colors
 						float color_r, color_g, color_b;
@@ -300,32 +297,29 @@ void Chunk::generate_mesh_greedy()
 	}
 }
 
+// TODO: Move to mesh/renderer
 void Chunk::load_mesh() {
-	// Only bother if any vertices exist
-	if (vertices.size() > 0)
-	{
-		glGenVertexArrays(1, &VAO);
-		glGenBuffers(1, &VBO);
-		// glGenBuffers(1, &EBO);
+	// // Only bother if any vertices exist
+	// if (vertices.size() > 0)
+	// {
+	// 	glGenVertexArrays(1, &VAO);
+	// 	glGenBuffers(1, &VBO);
 
-		glBindVertexArray(VAO);
+	// 	glBindVertexArray(VAO);
 
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
+	// 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	// 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
-		// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		// glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), &indices[0], GL_STATIC_DRAW);
-
-		// Position
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
-		// Normals
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
-		glEnableVertexAttribArray(1);
-		// Color
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
-		glEnableVertexAttribArray(2);
-	}
+	// 	// Position
+	// 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+	// 	glEnableVertexAttribArray(0);
+	// 	// Normals
+	// 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
+	// 	glEnableVertexAttribArray(1);
+	// 	// Color
+	// 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
+	// 	glEnableVertexAttribArray(2);
+	// }
 }
 
 void Chunk::delete_buffers()

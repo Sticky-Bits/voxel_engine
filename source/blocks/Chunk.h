@@ -18,11 +18,7 @@ public:
 	int xyz_to_index(int x, int y, int z);
 	void index_to_xyz(int index, int *x, int *y, int *z);
 
-	std::vector<float> vertices;
-	std::vector<int> indices;
-	glm::vec3 chunk_position;
-	glm::vec3 world_position;
-	unsigned int VBO, VAO, EBO;
+	unsigned int VBO, VAO;
 
 	// A new world order
 	void set_position(glm::vec3 position);
