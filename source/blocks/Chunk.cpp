@@ -3,7 +3,7 @@
 #include <array>
 #include <glm/glm.hpp>
 #include <iostream>
-#include <fastnoise.h>
+#include "FastNoise.h"
 
 #include "Chunk.h"
 #include "ChunkManager.h"
