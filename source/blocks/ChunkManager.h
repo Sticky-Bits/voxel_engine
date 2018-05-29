@@ -2,9 +2,9 @@
 
 #include <unordered_map>
 #include <queue>
+#include <functional>
 
 #include <glm/glm.hpp>
-#include <glm/gtx/hash.hpp>
 
 #include "Chunk.h"
 
@@ -25,7 +25,6 @@ public:
 	void process_entire_chunk_queue();
 
 	// Vars
-	std::unordered_map<glm::vec3, Chunk> chunks;
 	static const int VIEW_DISTANCE = 10;
 	std::queue<std::function<void()>> operation_queue;
 

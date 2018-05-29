@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include <GLFW\glfw3.h>
+#include <GLFW/glfw3.h>
 
 #include "Window.h"
 #include "Game.h"

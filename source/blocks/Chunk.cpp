@@ -3,12 +3,12 @@
 #include <array>
 #include <glm/glm.hpp>
 #include <iostream>
+#include <fastnoise.h>
 
 #include "Chunk.h"
 #include "ChunkManager.h"
 #include "../Settings.h"
 #include "../Game.h"
-#include "fastnoise.h"
 
 Chunk::Chunk(Renderer* p_renderer, ChunkManager* p_chunk_manager, Settings* p_settings)
 {

@@ -23,7 +23,6 @@ void ChunkManager::regenerate()
 {
 	std::queue<std::function<void()>> empty;
 	std::swap(operation_queue, empty);
-	chunks.clear();
 	change_chunks(glm::vec3(999.0f, 999.0f, 999.0f), glm::vec3(0.0f, 0.0f, 0.0f), true);
 }
 
@@ -109,7 +108,6 @@ void ChunkManager::_show_chunk(glm::vec3 chunk)
 
 void ChunkManager::_hide_chunk(glm::vec3 chunk)
 {
-	chunks.erase(chunk);
 }
 
 void ChunkManager::process_chunk_queue()
