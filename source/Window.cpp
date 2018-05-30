@@ -7,6 +7,8 @@
 #include "Game.h"
 #include "Settings.h"
 
+#include <iostream>
+
 // Callbacks
 void window_resize_callback(GLFWwindow* p_window, int width, int height);
 void window_close_callback(GLFWwindow* p_window);
@@ -60,6 +62,7 @@ void Window::create()
 	}
 
 	initialise_window_context(mp_window);
+	std::cout << "Initialised GL context" << std::endl;
 
 	if (mp_settings->m_full_screen)
 	{
