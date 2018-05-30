@@ -99,6 +99,11 @@ void ChunkManager::create_new_chunk(int x, int y, int z)
 	p_new_chunk->setup();
 }
 
+void ChunkManager::render()
+{
+	//for chunk in chunks: chunk.render()
+}
+
 void ChunkManager::_show_chunk(glm::vec3 chunk)
 {
 	// Create pair of position_3d and Chunk called insert_chunk, consisting of position_3d = passed param 'chunk' and a new Chunk object at position 'chunk'

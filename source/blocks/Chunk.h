@@ -23,6 +23,7 @@ public:
 	// A new world order
 	void set_position(glm::vec3 position);
 	void setup();
+	void render();
 
 	Mesh* mp_mesh;
 	Renderer* mp_renderer;

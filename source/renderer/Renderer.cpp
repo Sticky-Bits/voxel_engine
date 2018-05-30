@@ -1,8 +1,14 @@
 #include "Renderer.h"
+#include "../shader/Shader.h"
 
-void Renderer::draw()
+Renderer::Renderer()
 {
-	// for mesh in m_meshes: mesh.draw
+	mp_shader = new Shader("shaders/vert_light.glsl", "shaders/frag_light.glsl");
+}
+
+Renderer::~Renderer()
+{
+	// TODO: Delete shader here? mm is hard yo
 }
 
 Mesh* Renderer::create_mesh()

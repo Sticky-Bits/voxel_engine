@@ -30,6 +30,7 @@ public:
 
 	// A new world order
 	void create_new_chunk(int x, int y, int z);
+	void render();
 	Renderer* mp_renderer;
 	Settings* mp_settings;
 

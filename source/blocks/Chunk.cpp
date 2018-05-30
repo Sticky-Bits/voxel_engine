@@ -21,6 +21,7 @@ void Chunk::setup()
 {
 	generate_voxels();
 	generate_mesh_greedy();
+	mp_mesh->generate_buffers();
 }
 
 void Chunk::generate_voxels()
@@ -326,4 +327,13 @@ void Chunk::delete_buffers()
 {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+}
+
+void Chunk::render()
+{
+	glBindVertexArray(mp_mesh->m_vao);
+	glm::mat4 model;
+	model = glm::translate(model, m_position * (float)CHUNK_SIZE);
+	mp_renderer->mp_shader->setMat4("model", model);
+	glDrawArrays(GL_TRIANGLES, 0, mp_mesh->m_vertices.size() / 9);
 }

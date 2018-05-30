@@ -13,4 +13,5 @@ env.Program(target='build/voxel_engine', source=[
     "build/blocks/FastNoise.cpp",
     "build/renderer/Mesh.cpp",
     "build/renderer/Renderer.cpp",
+    "build/shader/Shader.cpp",
 ])

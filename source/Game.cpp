@@ -57,7 +57,7 @@ void Game::update()
 
 void Game::render()
 {
-
+	mp_chunk_manager->render();
 }
 
 void Game::resize_window(int width, int height)
