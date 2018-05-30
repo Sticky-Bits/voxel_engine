@@ -1,6 +1,7 @@
 #include "Shader.h"
 
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 // #include <glm/glm.hpp>
 
@@ -56,10 +57,8 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
     // 2. compile shaders
     unsigned int vertex, fragment;
     // vertex shader
-    std::cout << "Preparing to segfault lul" << std::endl;
-    std::cout << glGetString(GL_VERSION) << std::endl;
+    glfwSwapInterval(1);
     vertex = glCreateShader(GL_VERTEX_SHADER);
-    std::cout << "Wont see this" << std::endl;
     glShaderSource(vertex, 1, &vShaderCode, NULL);
     glCompileShader(vertex);
     checkCompileErrors(vertex, "VERTEX");

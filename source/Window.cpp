@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "Window.h"
@@ -63,6 +64,13 @@ void Window::create()
 
 	initialise_window_context(mp_window);
 	std::cout << "Initialised GL context" << std::endl;
+
+	// Load OpenGL function pointers
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD" << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
 	if (mp_settings->m_full_screen)
 	{
