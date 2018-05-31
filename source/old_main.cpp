@@ -11,7 +11,7 @@
 #include <glm/gtx/hash.hpp> // Gives us vector hashes for maps
 #include <glm/vector_relational.hpp>
 
-#include "shader/shader.h"
+#include "shader/Shader.h"
 #include "renderer/Camera.h"
 #include "blocks/Chunk.h"
 #include "blocks/ChunkManager.h"

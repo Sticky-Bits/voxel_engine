@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 class Game;
@@ -23,6 +24,7 @@ public:
 	void resize_window(int width, int height);
 	void set_full_screen(bool full_screen);
 	void poll_events();
+	void swap_buffers();
 
 	int m_window_width;
 	int m_window_height;

@@ -16,6 +16,7 @@ ChunkManager::ChunkManager(Renderer* p_renderer, Settings* p_settings)
 	// TODO: Maybe don't do the nines thing...
 	mp_renderer = p_renderer;
 	mp_settings = p_settings;
+	// TODO: Find a way to track this chunk so we can render it
 	create_new_chunk(0, 0, 0);
 }
 
@@ -94,14 +95,31 @@ void ChunkManager::hide_chunk(glm::vec3 chunk, bool immediate)
 
 void ChunkManager::create_new_chunk(int x, int y, int z)
 {
+	ChunkPosition chunk_position;
+	chunk_position.x = x;
+	chunk_position.y = y;
+	chunk_position.z = z;
+
 	Chunk* p_new_chunk = new Chunk(mp_renderer, this, mp_settings);
 	p_new_chunk->set_position(glm::vec3((float)x, (float)y, (float)z) * (float)Chunk::CHUNK_SIZE);
+	
+	// Add chunk to list
+	m_chunk_map[chunk_position] = p_new_chunk;
+	
 	p_new_chunk->setup();
 }
 
 void ChunkManager::render()
 {
 	//for chunk in chunks: chunk.render()
+	// typedef std::map<ChunkPosition, Chunk*>::iterator it_type;
+	// for (it_type iterator = m_chunk_map.begin(); iterator != m_chunk_map.end(); iterator++)
+	// {
+	// 	Chunk* chunk = iterator->second;
+	// 	// TODO: Multithreading, check if chunk is ready to be rendered
+	// 	// TODO: Check if chunk in frustum
+	// 	chunk->render();
+	// }
 }
 
 void ChunkManager::_show_chunk(glm::vec3 chunk)

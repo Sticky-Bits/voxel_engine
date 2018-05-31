@@ -17,6 +17,7 @@ void key_callback(GLFWwindow* p_window, int key, int scancode, int action, int m
 void character_callback(GLFWwindow* p_window, unsigned int key_code);
 void mouse_button_callback(GLFWwindow* p_window, int button, int action, int mods);
 void mouse_scroll_callback(GLFWwindow* p_window, double x, double y);
+void framebuffer_size_callback(GLFWwindow* p_window, int width, int height);
 
 Window::Window(Game* p_game, Settings* p_settings)
 {
@@ -63,7 +64,6 @@ void Window::create()
 	}
 
 	initialise_window_context(mp_window);
-	std::cout << "Initialised GL context" << std::endl;
 
 	// Load OpenGL function pointers
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -134,6 +134,7 @@ void Window::initialise_window_context(GLFWwindow* p_window)
 	glfwSetCharCallback(p_window, character_callback);
 	glfwSetMouseButtonCallback(p_window, mouse_button_callback);
 	glfwSetScrollCallback(p_window, mouse_scroll_callback);
+	glfwSetFramebufferSizeCallback(p_window, framebuffer_size_callback);
 
 	// Center on screen
 	const GLFWvidmode* p_vid_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -161,7 +162,17 @@ void window_resize_callback(GLFWwindow* p_window, int width, int height)
 	Game::get_instance()->resize_window(width, height);
 }
 
+void framebuffer_size_callback(GLFWwindow* p_window, int width, int height)
+{
+	Game::get_instance()->set_framebuffer_size(width, height);
+}
+
 void window_close_callback(GLFWwindow* p_window)
 {
 	Game::get_instance()->close_window();
+}
+
+void Window::swap_buffers()
+{
+	glfwSwapBuffers(mp_window);
 }

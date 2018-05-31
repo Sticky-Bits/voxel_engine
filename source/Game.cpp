@@ -19,9 +19,9 @@ void Game::create(Settings* settings)
 	m_should_quit = false;
 	m_delta_time = 0.0f;
 
-	mp_renderer = new Renderer();
-	mp_chunk_manager = new ChunkManager(mp_renderer, mp_settings);
 	mp_camera = new Camera(glm::vec3(0, 0, 0));
+	mp_renderer = new Renderer(mp_camera, mp_window);
+	mp_chunk_manager = new ChunkManager(mp_renderer, mp_settings);
 }
 
 void Game::destroy()
@@ -57,7 +57,9 @@ void Game::update()
 
 void Game::render()
 {
+	mp_renderer->pre_render();
 	mp_chunk_manager->render();
+	mp_renderer->post_render();
 }
 
 void Game::resize_window(int width, int height)
@@ -66,6 +68,11 @@ void Game::resize_window(int width, int height)
 	m_window_height = height;
 
 	mp_window->resize_window(m_window_width, m_window_height);
+}
+
+void Game::set_framebuffer_size(int width, int height)
+{
+	mp_renderer->set_framebuffer_size(width, height);
 }
 
 void Game::close_window()

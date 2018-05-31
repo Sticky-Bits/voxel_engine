@@ -31,6 +31,7 @@ public:
 	void mouse_scroll(double x, double y);
 
 	void resize_window(int width, int height);
+	void set_framebuffer_size(int width, int height);
 	void close_window();
 
 private:

@@ -3,10 +3,37 @@
 #include <unordered_map>
 #include <queue>
 #include <functional>
+#include <map>
 
 #include <glm/glm.hpp>
 
 #include "Chunk.h"
+
+struct ChunkPosition
+{
+	int x;
+	int y;
+	int z;
+};
+
+inline bool const operator==(const ChunkPosition& l, const ChunkPosition& r)
+{
+	return l.x == r.x && l.y == r.y && l.z == r.z;
+};
+
+inline bool const operator<(const ChunkPosition& l, const ChunkPosition& r)
+{
+	if (l.x < r.x) return true;
+	if (l.x > r.x) return false;
+
+	if (l.y < r.y) return true;
+	if (l.y > r.y) return false;
+
+	if (l.z < r.z) return true;
+	if (l.z > r.z) return false;
+
+	return false;
+};
 
 class ChunkManager
 {
@@ -38,5 +65,7 @@ private:
 	// Methods
 	void _show_chunk(glm::vec3 chunk);
 	void _hide_chunk(glm::vec3 chunk);
+
+	std::map<ChunkPosition, Chunk*> m_chunk_map;
 
 };
